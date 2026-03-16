@@ -286,126 +286,100 @@
             }
 
             // --- Authentication Actions ---
-            authSubmit.addEventListener('click', () => {
+            authSubmit.addEventListener('click', async () => {
                 const email = (authEmail.value || '').trim();
                 const pass = (authPass.value || '').trim();
-                const profile = getMockProfile();
 
-                if (!email) {
-                    authError.textContent = 'Preencha o email';
+                if (!email || !pass) {
+                    authError.textContent = 'Preencha todos os campos';
                     return;
                 }
 
-                authSubmit.addEventListener('click', async () => {
-                    const email = (authEmail.value || '').trim();
-                    const pass = (authPass.value || '').trim();
+                try {
+                    const resp = await fetch(`${API_URL}/api/login`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email: email, password: pass })
+                    });
 
-                    if (!email || !pass) {
-                        authError.textContent = 'Preencha todos os campos';
-                        return;
+                    const data = await resp.json();
+
+                    if (resp.ok) {
+                        sessionStorage.setItem('isLoggedIn', 'true');
+                        sessionStorage.setItem('userEmail', email);
+                        authError.textContent = '';
+                        authEmail.value = '';
+                        authPass.value = '';
+                        hideLogin();
+                    } else {
+                        authError.textContent = data.error || 'Erro ao fazer login';
                     }
-
-                    try {
-                        const resp = await fetch(`${API_URL}/api/login`, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ email: email, password: pass })
-                        });
-
-                        const data = await resp.json();
-
-                        if (resp.ok) {
-                            sessionStorage.setItem('isLoggedIn', 'true');
-                            sessionStorage.setItem('userEmail', email);
-                            authError.textContent = '';
-                            authEmail.value = '';
-                            authPass.value = '';
-                            hideLogin();
-                        } else {
-                            authError.textContent = data.error || 'Erro ao fazer login';
-                        }
-                    } catch (err) {
-                        authError.textContent = 'Erro de conexão com o servidor';
-                    }
-                });
-
-                toggleAuthPass.addEventListener('click', function () {
-                    const hidden = authPass.type === 'password';
-                    authPass.type = hidden ? 'text' : 'password';
-                    this.textContent = hidden ? 'Ocultar' : 'Mostrar';
-                });
-
-                // Password reset toggles
-                goReset.addEventListener('click', () => { resetSection.style.display = 'block'; authError.textContent = ''; });
-                backLogin.addEventListener('click', () => { resetSection.style.display = 'none'; authError.textContent = ''; });
-
-                toggleResetPass.addEventListener('click', function () {
-                    const hidden = resetPass.type === 'password';
-                    resetPass.type = hidden ? 'text' : 'password';
-                    this.textContent = hidden ? 'Ocultar' : 'Mostrar';
-                });
-
-
-
-                // --- Dropdown Menu Logic ---
-                const userMenuBtn = document.getElementById('userMenuBtn');
-                const userDropdown = document.getElementById('userDropdown');
-                const manageAccountBtn = document.getElementById('manageAccountBtn');
-                const logoutBtn = document.getElementById('logoutBtn');
-
-                userMenuBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    userDropdown.classList.toggle('show');
-                });
-
-                document.addEventListener('click', (e) => {
-                    if (!userMenuBtn.contains(e.target) && !userDropdown.contains(e.target)) {
-                        userDropdown.classList.remove('show');
-                    }
-                });
-
-                // --- Manage Account Modal Logic ---
-                const manageAccountModal = document.getElementById('manageAccountModal');
-                const closeManageModal = document.getElementById('closeManageModal');
-                const manageEmail = document.getElementById('manageEmail');
-                const managePass = document.getElementById('managePass');
-                const toggleManagePass = document.getElementById('toggleManagePass');
-                const saveAccountBtn = document.getElementById('saveAccountBtn');
-                const manageError = document.getElementById('manageError');
-
-                function openManageModal() {
-                    userDropdown.classList.remove('show');
-                    manageAccountModal.classList.add('open');
-                    manageError.textContent = '';
-
-                    const profile = getMockProfile();
-                    manageEmail.value = profile.email;
-                    managePass.value = profile.pass;
+                } catch (err) {
+                    authError.textContent = 'Erro de conexão com o servidor';
                 }
+            });
 
-                function closeManage() {
-                    manageAccountModal.classList.remove('open');
-                }
+            toggleAuthPass.addEventListener('click', function () {
+                const hidden = authPass.type === 'password';
+                authPass.type = hidden ? 'text' : 'password';
+                this.textContent = hidden ? 'Ocultar' : 'Mostrar';
+            });
 
-                saveAccountBtn.addEventListener('click', () => {
-                    alert('Funcionalidade disponível apenas via painel de gerenciamento.');
-                    closeManage();
-                });
+            // Password reset toggles
+            goReset.addEventListener('click', () => { resetSection.style.display = 'block'; authError.textContent = ''; });
+            backLogin.addEventListener('click', () => { resetSection.style.display = 'none'; authError.textContent = ''; });
 
-                // --- Logout Actions ---
-                logoutBtn.addEventListener('click', () => {
+            toggleResetPass.addEventListener('click', function () {
+                const hidden = resetPass.type === 'password';
+                resetPass.type = hidden ? 'text' : 'password';
+                this.textContent = hidden ? 'Ocultar' : 'Mostrar';
+            });
+
+            // --- Dropdown Menu Logic ---
+            const userMenuBtn = document.getElementById('userMenuBtn');
+            const userDropdown = document.getElementById('userDropdown');
+            const manageAccountBtn = document.getElementById('manageAccountBtn');
+            const logoutBtn = document.getElementById('logoutBtn');
+
+            userMenuBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                userDropdown.classList.toggle('show');
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!userMenuBtn.contains(e.target) && !userDropdown.contains(e.target)) {
                     userDropdown.classList.remove('show');
-                    sessionStorage.removeItem('isLoggedIn');
-                    showLogin();
+                }
+            });
 
-                    if (typeof window.showToast === 'function') {
-                        window.showToast('Sessão encerrada!');
-                    }
-                });
+            // --- Manage Account Modal Logic ---
+            const manageAccountModal = document.getElementById('manageAccountModal');
+            const closeManageModal = document.getElementById('closeManageModal');
+            const manageEmail = document.getElementById('manageEmail');
+            const managePass = document.getElementById('managePass');
+            const toggleManagePass = document.getElementById('toggleManagePass');
+            const saveAccountBtn = document.getElementById('saveAccountBtn');
+            const manageError = document.getElementById('manageError');
 
-                // Init
-                document.addEventListener('DOMContentLoaded', checkSession);
-            })();
+            saveAccountBtn.addEventListener('click', () => {
+                alert('Funcionalidade disponível apenas via painel de gerenciamento.');
+                closeManage();
+            });
+
+            // --- Logout Actions ---
+            logoutBtn.addEventListener('click', () => {
+                userDropdown.classList.remove('show');
+                sessionStorage.removeItem('isLoggedIn');
+                showLogin();
+
+                if (typeof window.showToast === 'function') {
+                    window.showToast('Sessão encerrada!');
+                }
+            });
+
+            // Init
+            checkSession();
+        })();
     </script>
 </body>
 
