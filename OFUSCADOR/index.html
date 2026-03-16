@@ -361,6 +361,29 @@
             const saveAccountBtn = document.getElementById('saveAccountBtn');
             const manageError = document.getElementById('manageError');
 
+            function openManageModal() {
+                userDropdown.classList.remove('show');
+                manageAccountModal.classList.add('open');
+                manageError.textContent = '';
+                
+                // Pegar dados da sessão (email)
+                manageEmail.value = sessionStorage.getItem('userEmail') || '';
+                managePass.value = ''; // Senha não é exibida por segurança
+            }
+
+            function closeManage() {
+                manageAccountModal.classList.remove('open');
+            }
+
+            manageAccountBtn.addEventListener('click', openManageModal);
+            closeManageModal.addEventListener('click', closeManage);
+
+            toggleManagePass.addEventListener('click', function () {
+                const hidden = managePass.type === 'password';
+                managePass.type = hidden ? 'text' : 'password';
+                this.textContent = hidden ? 'Ocultar' : 'Mostrar';
+            });
+
             saveAccountBtn.addEventListener('click', () => {
                 alert('Funcionalidade disponível apenas via painel de gerenciamento.');
                 closeManage();
@@ -370,6 +393,7 @@
             logoutBtn.addEventListener('click', () => {
                 userDropdown.classList.remove('show');
                 sessionStorage.removeItem('isLoggedIn');
+                sessionStorage.removeItem('userEmail');
                 showLogin();
 
                 if (typeof window.showToast === 'function') {
