@@ -67,11 +67,20 @@
         </section>
     </main>
     <script>
-        function readAccess() {
-            try { return JSON.parse(localStorage.getItem('userAccess') || '{}'); } catch { return {}; }
+        async function readAccess() {
+            const resp = await fetch('/api/users');
+            return await resp.json();
         }
-        function writeAccess(db) {
-            localStorage.setItem('userAccess', JSON.stringify(db));
+        async function writeAccess(email, password, days) {
+            const expiry = Date.now() + days * 86400000;
+            await fetch('/api/users', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password, expiry })
+            });
+        }
+        async function delAccess(email) {
+            await fetch('/api/users/' + encodeURIComponent(email), { method: 'DELETE' });
         }
         function fmtDate(ms) {
             var d = new Date(ms);
@@ -81,8 +90,8 @@
             var diff = ms - Date.now();
             return Math.max(0, Math.ceil(diff / 86400000));
         }
-        function refreshTable() {
-            var db = readAccess();
+        async function refreshTable() {
+            var db = await readAccess();
             var tbody = document.querySelector('#access-table tbody');
             tbody.innerHTML = '';
             Object.keys(db).forEach(function (email) {
@@ -95,24 +104,19 @@
                 tbody.appendChild(tr);
             });
             tbody.querySelectorAll('button[data-del]').forEach(function (btn) {
-                btn.addEventListener('click', function () {
+                btn.addEventListener('click', async function () {
                     var email = this.getAttribute('data-del');
-                    var db2 = readAccess();
-                    delete db2[email];
-                    writeAccess(db2);
+                    await delAccess(email);
                     refreshTable();
                 });
             });
         }
-        document.getElementById('btn-add').addEventListener('click', function () {
+        document.getElementById('btn-add').addEventListener('click', async function () {
             var email = (document.getElementById('acc-email').value || '').trim().toLowerCase();
             var pass = (document.getElementById('acc-pass').value || '').trim();
             var days = parseInt(document.getElementById('acc-days').value, 10);
             if (!email || !pass || !(days > 0)) return;
-            var db = readAccess();
-            var expiry = Date.now() + days * 86400000;
-            db[email] = { password: pass, expiry: expiry };
-            writeAccess(db);
+            await writeAccess(email, pass, days);
             refreshTable();
         });
         document.getElementById('toggleAccPass').addEventListener('click', function () {

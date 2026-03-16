@@ -251,19 +251,7 @@
             const accessInfo = document.getElementById('accessInfo');
             const accessDays = document.getElementById('accessDays');
 
-            function getMockProfile() {
-                const raw = localStorage.getItem('mockUserProfile');
-                if(!raw) return null; // No profile set yet
-                try {
-                    return JSON.parse(raw);
-                } catch(e) {
-                    return null;
-                }
-            }
 
-            function setMockProfile(profile) {
-                localStorage.setItem('mockUserProfile', JSON.stringify(profile));
-            }
 
             function showLogin() {
                 authOverlay.classList.add('open');
@@ -295,34 +283,36 @@
                     return;
                 }
 
-                if (profile) {
-                    // Verificando dados existentes
-                    if (email.toLowerCase() === profile.email.toLowerCase() && pass === profile.pass) {
+            authSubmit.addEventListener('click', async () => {
+                const email = (authEmail.value || '').trim();
+                const pass = (authPass.value || '').trim();
+
+                if(!email || !pass) {
+                    authError.textContent = 'Preencha todos os campos';
+                    return;
+                }
+
+                try {
+                    const resp = await fetch('/api/login', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email: email, password: pass })
+                    });
+
+                    const data = await resp.json();
+
+                    if(resp.ok) {
                         sessionStorage.setItem('isLoggedIn', 'true');
+                        sessionStorage.setItem('userEmail', email);
                         authError.textContent = '';
                         authEmail.value = '';
                         authPass.value = '';
                         hideLogin();
                     } else {
-                        // Se não tem senha configurada e o email bate
-                        if (profile.pass === "" && email.toLowerCase() === profile.email.toLowerCase()) {
-                           sessionStorage.setItem('isLoggedIn', 'true');
-                           authError.textContent = '';
-                           authEmail.value = '';
-                           authPass.value = '';
-                           hideLogin();
-                        } else {
-                           authError.textContent = 'Email ou senha incorretos';
-                        }
+                        authError.textContent = data.error || 'Erro ao fazer login';
                     }
-                } else {
-                    // Primeiro acesso: aceita qualquer email/senha inserido e salva como perfil!
-                    setMockProfile({ email: email, pass: pass });
-                    sessionStorage.setItem('isLoggedIn', 'true');
-                    authError.textContent = '';
-                    authEmail.value = '';
-                    authPass.value = '';
-                    hideLogin();
+                } catch (err) {
+                    authError.textContent = 'Erro de conexão com o servidor';
                 }
             });
 
@@ -342,22 +332,7 @@
                 this.textContent = hidden ? 'Ocultar' : 'Mostrar';
             });
 
-            resetSubmit.addEventListener('click', () => {
-                const mail = resetEmail.value.trim();
-                const newp = resetPass.value.trim();
-                if(!mail || !newp) { authError.textContent = 'Preencha os campos de nova senha'; return; }
-                
-                const profile = getMockProfile();
-                if(profile.email !== mail) {
-                    authError.textContent = 'Email não encontrado na base de demonstração';
-                    return;
-                }
-                
-                profile.pass = newp;
-                setMockProfile(profile);
-                authError.textContent = 'Senha atualizada com sucesso!';
-                resetSection.style.display = 'none';
-            });
+
 
             // --- Dropdown Menu Logic ---
             const userMenuBtn = document.getElementById('userMenuBtn');
@@ -399,34 +374,8 @@
                 manageAccountModal.classList.remove('open');
             }
             
-            manageAccountBtn.addEventListener('click', openManageModal);
-            closeManageModal.addEventListener('click', closeManage);
-            
-            toggleManagePass.addEventListener('click', function() {
-                const hidden = managePass.type === 'password';
-                managePass.type = hidden ? 'text' : 'password';
-                this.textContent = hidden ? 'Ocultar' : 'Mostrar';
-            });
-            
             saveAccountBtn.addEventListener('click', () => {
-                const newEmail = manageEmail.value.trim();
-                const newPass = managePass.value.trim();
-                
-                if(!newEmail || !newPass) {
-                    manageError.textContent = 'Preencha todos os campos.';
-                    return;
-                }
-                
-                const profile = getMockProfile();
-                profile.email = newEmail;
-                profile.pass = newPass;
-                setMockProfile(profile);
-                
-                if (typeof window.showToast === 'function') {
-                    window.showToast('Conta atualizada!');
-                } else {
-                    alert('Conta atualizada!');
-                }
+                alert('Funcionalidade disponível apenas via painel de gerenciamento.');
                 closeManage();
             });
 
