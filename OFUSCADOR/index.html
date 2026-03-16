@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,8 +9,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="shortcut icon" href="../favicon/favicon.ico" type="image/x-icon">
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Outfit:wght@300;400;600;700&display=swap"
+        rel="stylesheet">
 </head>
+
 <body>
     <div class="background-effects">
         <div class="grid-pattern"></div>
@@ -21,7 +25,7 @@
     <header class="header">
         <div class="logo">
             <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
             </svg>
             <span>GL DEV</span>
         </div>
@@ -32,7 +36,7 @@
         <div class="access-info" id="accessInfo">
             <span id="accessDays"></span>
         </div>
-        
+
         <div class="user-menu-container">
             <button class="action-btn" id="userMenuBtn">
                 <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
@@ -69,7 +73,7 @@
                 <h1>Ofuscação de Código</h1>
                 <p>Proteja seu código JavaScript contra engenharia reversa.</p>
             </div>
-            
+
             <div class="editor-grid">
                 <div class="editor-panel">
                     <div class="panel-header">
@@ -120,7 +124,7 @@
                 <h1>Gerador de Licenças</h1>
                 <p>Crie chaves de licença únicas e injete verificação de licença no seu código.</p>
             </div>
-            
+
             <div class="license-grid">
                 <div class="license-panel">
                     <h3>Gerar Chave de Licença</h3>
@@ -149,7 +153,8 @@
                     <button class="btn-primary" id="inject-license-btn">Injetar Proteção</button>
                     <div class="license-output" id="protected-code-display">
                         <span class="label">Código protegido:</span>
-                        <textarea id="protected-code-output" readonly rows="6" placeholder="O código com verificação de licença aparecerá aqui..."></textarea>
+                        <textarea id="protected-code-output" readonly rows="6"
+                            placeholder="O código com verificação de licença aparecerá aqui..."></textarea>
                         <button class="action-btn small" id="copy-protected">Copiar</button>
                     </div>
                 </div>
@@ -174,7 +179,8 @@
                 <label for="authPass">Senha</label>
                 <div style="display: flex; gap: 0.5rem;">
                     <input type="password" id="authPass" placeholder="senha">
-                    <button class="action-btn" id="toggleAuthPass" type="button" style="padding: 0 0.75rem;">Mostrar</button>
+                    <button class="action-btn" id="toggleAuthPass" type="button"
+                        style="padding: 0 0.75rem;">Mostrar</button>
                 </div>
             </div>
             <button class="btn-primary" id="authSubmit">Entrar</button>
@@ -190,7 +196,8 @@
                     <label for="resetPass">Nova senha</label>
                     <div style="display: flex; gap: 0.5rem;">
                         <input type="password" id="resetPass" placeholder="nova senha">
-                        <button class="action-btn" id="toggleResetPass" type="button" style="padding: 0 0.75rem;">Mostrar</button>
+                        <button class="action-btn" id="toggleResetPass" type="button"
+                            style="padding: 0 0.75rem;">Mostrar</button>
                     </div>
                 </div>
                 <button class="btn-primary" id="resetSubmit">Salvar nova senha</button>
@@ -206,7 +213,8 @@
         <div class="auth-card">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
                 <h3 style="margin: 0;">Gerenciar Conta</h3>
-                <button id="closeManageModal" style="background: transparent; border: none; color: var(--text-muted); cursor: pointer;">
+                <button id="closeManageModal"
+                    style="background: transparent; border: none; color: var(--text-muted); cursor: pointer;">
                     <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
                         <line x1="18" y1="6" x2="6" y2="18"></line>
                         <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -222,7 +230,8 @@
                 <label for="managePass">Nova Senha</label>
                 <div style="display: flex; gap: 0.5rem;">
                     <input type="password" id="managePass" placeholder="nova senha">
-                    <button class="action-btn" id="toggleManagePass" type="button" style="padding: 0 0.75rem;">Mostrar</button>
+                    <button class="action-btn" id="toggleManagePass" type="button"
+                        style="padding: 0 0.75rem;">Mostrar</button>
                 </div>
             </div>
             <button class="btn-primary" id="saveAccountBtn">Salvar Alterações</button>
@@ -233,10 +242,10 @@
 
     <script src="app.js"></script>
     <script>
-        (function(){
+        (function () {
             // --- Config Centralizada ---
             // No deploy do Ofuscador, você pode criar um arquivo config.js ou definir aqui:
-            const API_URL = window.location.origin; // Se estiver no mesmo dominio
+            const API_URL = 'https://gldev-acesso.onrender.com'; // Se estiver no mesmo dominio
             // Se o gerenciador estiver em outro dominio, mude para:
             // const API_URL = 'https://seu-gerenciador.onrender.com';
             const authOverlay = document.getElementById('authOverlay');
@@ -269,7 +278,7 @@
             }
 
             function checkSession() {
-                if(sessionStorage.getItem('isLoggedIn') === 'true') {
+                if (sessionStorage.getItem('isLoggedIn') === 'true') {
                     hideLogin();
                 } else {
                     showLogin();
@@ -282,121 +291,122 @@
                 const pass = (authPass.value || '').trim();
                 const profile = getMockProfile();
 
-                if(!email) {
+                if (!email) {
                     authError.textContent = 'Preencha o email';
                     return;
                 }
 
-            authSubmit.addEventListener('click', async () => {
-                const email = (authEmail.value || '').trim();
-                const pass = (authPass.value || '').trim();
+                authSubmit.addEventListener('click', async () => {
+                    const email = (authEmail.value || '').trim();
+                    const pass = (authPass.value || '').trim();
 
-                if(!email || !pass) {
-                    authError.textContent = 'Preencha todos os campos';
-                    return;
-                }
-
-                try {
-                    const resp = await fetch(`${API_URL}/api/login`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ email: email, password: pass })
-                    });
-
-                    const data = await resp.json();
-
-                    if(resp.ok) {
-                        sessionStorage.setItem('isLoggedIn', 'true');
-                        sessionStorage.setItem('userEmail', email);
-                        authError.textContent = '';
-                        authEmail.value = '';
-                        authPass.value = '';
-                        hideLogin();
-                    } else {
-                        authError.textContent = data.error || 'Erro ao fazer login';
+                    if (!email || !pass) {
+                        authError.textContent = 'Preencha todos os campos';
+                        return;
                     }
-                } catch (err) {
-                    authError.textContent = 'Erro de conexão com o servidor';
-                }
-            });
 
-            toggleAuthPass.addEventListener('click', function() {
-                const hidden = authPass.type === 'password';
-                authPass.type = hidden ? 'text' : 'password';
-                this.textContent = hidden ? 'Ocultar' : 'Mostrar';
-            });
+                    try {
+                        const resp = await fetch(`${API_URL}/api/login`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ email: email, password: pass })
+                        });
 
-            // Password reset toggles
-            goReset.addEventListener('click', () => { resetSection.style.display = 'block'; authError.textContent=''; });
-            backLogin.addEventListener('click', () => { resetSection.style.display = 'none'; authError.textContent=''; });
-            
-            toggleResetPass.addEventListener('click', function() {
-                const hidden = resetPass.type === 'password';
-                resetPass.type = hidden ? 'text' : 'password';
-                this.textContent = hidden ? 'Ocultar' : 'Mostrar';
-            });
+                        const data = await resp.json();
+
+                        if (resp.ok) {
+                            sessionStorage.setItem('isLoggedIn', 'true');
+                            sessionStorage.setItem('userEmail', email);
+                            authError.textContent = '';
+                            authEmail.value = '';
+                            authPass.value = '';
+                            hideLogin();
+                        } else {
+                            authError.textContent = data.error || 'Erro ao fazer login';
+                        }
+                    } catch (err) {
+                        authError.textContent = 'Erro de conexão com o servidor';
+                    }
+                });
+
+                toggleAuthPass.addEventListener('click', function () {
+                    const hidden = authPass.type === 'password';
+                    authPass.type = hidden ? 'text' : 'password';
+                    this.textContent = hidden ? 'Ocultar' : 'Mostrar';
+                });
+
+                // Password reset toggles
+                goReset.addEventListener('click', () => { resetSection.style.display = 'block'; authError.textContent = ''; });
+                backLogin.addEventListener('click', () => { resetSection.style.display = 'none'; authError.textContent = ''; });
+
+                toggleResetPass.addEventListener('click', function () {
+                    const hidden = resetPass.type === 'password';
+                    resetPass.type = hidden ? 'text' : 'password';
+                    this.textContent = hidden ? 'Ocultar' : 'Mostrar';
+                });
 
 
 
-            // --- Dropdown Menu Logic ---
-            const userMenuBtn = document.getElementById('userMenuBtn');
-            const userDropdown = document.getElementById('userDropdown');
-            const manageAccountBtn = document.getElementById('manageAccountBtn');
-            const logoutBtn = document.getElementById('logoutBtn');
-            
-            userMenuBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                userDropdown.classList.toggle('show');
-            });
-            
-            document.addEventListener('click', (e) => {
-                if (!userMenuBtn.contains(e.target) && !userDropdown.contains(e.target)) {
+                // --- Dropdown Menu Logic ---
+                const userMenuBtn = document.getElementById('userMenuBtn');
+                const userDropdown = document.getElementById('userDropdown');
+                const manageAccountBtn = document.getElementById('manageAccountBtn');
+                const logoutBtn = document.getElementById('logoutBtn');
+
+                userMenuBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    userDropdown.classList.toggle('show');
+                });
+
+                document.addEventListener('click', (e) => {
+                    if (!userMenuBtn.contains(e.target) && !userDropdown.contains(e.target)) {
+                        userDropdown.classList.remove('show');
+                    }
+                });
+
+                // --- Manage Account Modal Logic ---
+                const manageAccountModal = document.getElementById('manageAccountModal');
+                const closeManageModal = document.getElementById('closeManageModal');
+                const manageEmail = document.getElementById('manageEmail');
+                const managePass = document.getElementById('managePass');
+                const toggleManagePass = document.getElementById('toggleManagePass');
+                const saveAccountBtn = document.getElementById('saveAccountBtn');
+                const manageError = document.getElementById('manageError');
+
+                function openManageModal() {
                     userDropdown.classList.remove('show');
+                    manageAccountModal.classList.add('open');
+                    manageError.textContent = '';
+
+                    const profile = getMockProfile();
+                    manageEmail.value = profile.email;
+                    managePass.value = profile.pass;
                 }
-            });
 
-            // --- Manage Account Modal Logic ---
-            const manageAccountModal = document.getElementById('manageAccountModal');
-            const closeManageModal = document.getElementById('closeManageModal');
-            const manageEmail = document.getElementById('manageEmail');
-            const managePass = document.getElementById('managePass');
-            const toggleManagePass = document.getElementById('toggleManagePass');
-            const saveAccountBtn = document.getElementById('saveAccountBtn');
-            const manageError = document.getElementById('manageError');
-            
-            function openManageModal() {
-                userDropdown.classList.remove('show');
-                manageAccountModal.classList.add('open');
-                manageError.textContent = '';
-                
-                const profile = getMockProfile();
-                manageEmail.value = profile.email;
-                managePass.value = profile.pass;
-            }
-            
-            function closeManage() {
-                manageAccountModal.classList.remove('open');
-            }
-            
-            saveAccountBtn.addEventListener('click', () => {
-                alert('Funcionalidade disponível apenas via painel de gerenciamento.');
-                closeManage();
-            });
-
-            // --- Logout Actions ---
-            logoutBtn.addEventListener('click', () => {
-                userDropdown.classList.remove('show');
-                sessionStorage.removeItem('isLoggedIn');
-                showLogin();
-                
-                if (typeof window.showToast === 'function') {
-                    window.showToast('Sessão encerrada!');
+                function closeManage() {
+                    manageAccountModal.classList.remove('open');
                 }
-            });
 
-            // Init
-            document.addEventListener('DOMContentLoaded', checkSession);
-        })();
+                saveAccountBtn.addEventListener('click', () => {
+                    alert('Funcionalidade disponível apenas via painel de gerenciamento.');
+                    closeManage();
+                });
+
+                // --- Logout Actions ---
+                logoutBtn.addEventListener('click', () => {
+                    userDropdown.classList.remove('show');
+                    sessionStorage.removeItem('isLoggedIn');
+                    showLogin();
+
+                    if (typeof window.showToast === 'function') {
+                        window.showToast('Sessão encerrada!');
+                    }
+                });
+
+                // Init
+                document.addEventListener('DOMContentLoaded', checkSession);
+            })();
     </script>
 </body>
+
 </html>
