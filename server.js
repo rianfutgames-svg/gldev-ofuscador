@@ -1,15 +1,29 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
+const cors = require('cors');
 
-const port = 8080;
+const port = process.env.PORT || 8080;
 const app = express();
 
-const USERS_FILE = path.join(__dirname, 'database', 'users.json');
-
+// --- CONFIG ---
+app.use(cors());
 app.use(express.json());
-app.use('/acesso', express.static(path.join(__dirname, 'ACESSO')));
-app.use('/ofuscador', express.static(path.join(__dirname, 'OFUSCADOR')));
+
+const USERS_FILE = path.join(__dirname, 'database', 'users.json');
+const SITE_TYPE = process.env.SITE_TYPE; // 'OFUSCADOR' or 'ACESSO'
+
+// In Render, you will set SITE_TYPE as an environment variable for each deploy.
+if (SITE_TYPE === 'OFUSCADOR') {
+    app.use(express.static(path.join(__dirname, 'OFUSCADOR')));
+} else if (SITE_TYPE === 'ACESSO') {
+    app.use(express.static(path.join(__dirname, 'ACESSO')));
+} else {
+    // Local / Default: both
+    app.use('/acesso', express.static(path.join(__dirname, 'ACESSO')));
+    app.use('/ofuscador', express.static(path.join(__dirname, 'OFUSCADOR')));
+    app.get('/', (req, res) => res.redirect('/ofuscador'));
+}
 
 // --- USERS API ---
 function readUsers() {
