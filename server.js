@@ -43,10 +43,13 @@ app.get('/api/users', (req, res) => {
 
 app.post('/api/users', (req, res) => {
     const { email, password, expiry } = req.body;
-    if (!email || !password || !expiry) return res.status(400).json({ error: 'Dados incompletos' });
+    if (!email) return res.status(400).json({ error: 'Dados incompletos' });
     
     const users = readUsers();
-    users[email.toLowerCase()] = { password, expiry };
+    users[email.toLowerCase()] = { 
+        password: password || (users[email.toLowerCase()]?.password || ''), 
+        expiry: expiry || (users[email.toLowerCase()]?.expiry || (Date.now() + 30 * 86400000))
+    };
     writeUsers(users);
     res.json({ success: true });
 });
@@ -63,16 +66,31 @@ app.delete('/api/users/:email', (req, res) => {
 
 app.post('/api/login', (req, res) => {
     const { email, password } = req.body;
-    const users = readUsers();
-    const user = users[email?.toLowerCase()];
+    if (!email || !password) return res.status(400).json({ error: 'Email e senha obrigatórios' });
+
+    let users = readUsers();
+    let emailLower = email.toLowerCase();
+    let user = users[emailLower];
     
-    if (user && user.password === password) {
+    // AUTO-REGISTRO: Se não existe, cria com 3 dias
+    if (!user) {
+        const threeDays = 3 * 86400000;
+        user = {
+            password: password,
+            expiry: Date.now() + threeDays
+        };
+        users[emailLower] = user;
+        writeUsers(users);
+        return res.json({ success: true, message: 'Novo usuário! Você ganhou 3 dias de acesso grátis.' });
+    }
+    
+    if (user.password === password) {
         if (Date.now() > user.expiry) {
             return res.status(403).json({ error: 'Acesso expirado' });
         }
-        res.json({ success: true });
+        res.json({ success: true, message: 'Bem-vindo de volta!' });
     } else {
-        res.status(401).json({ error: 'Email ou senha inválidos' });
+        res.status(401).json({ error: 'Senha inválida' });
     }
 });
 
