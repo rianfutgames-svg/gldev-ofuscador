@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="shortcut icon" href="../favicon/favicon.ico" type="image/x-icon">
+    <title>Gerenciar Acessos - GL DEV</title>
+</head>
+
+<body>
+    <header class="header" style="position: sticky; top: 0; z-index: 5;">
+        <div class="logo">
+            <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            </svg>
+            <span>GL DEV</span>
+        </div>
+        <nav class="nav-tabs">
+            <a class="tab-btn" href="https://ofuscador-gldev.netlify.app" style="text-decoration:none">Ir para Ofuscação</a>
+        </nav>
+    </header>
+
+    <main class="main-content" style="max-width:900px;margin:auto;padding:24px;">
+        <section class="tab-content active" style="display:block;">
+            <div class="section-header">
+                <h1>Gerenciar Acessos</h1>
+                <p>Cadastre email, senha e dias de acesso ao site de ofuscação.</p>
+            </div>
+            <div class="license-grid" style="grid-template-columns:1fr;gap:16px;">
+                <div class="license-panel">
+                    <h3>Novo Acesso</h3>
+                    <div class="form-group">
+                        <label for="acc-email">Email</label>
+                        <input type="email" id="acc-email" placeholder="usuario@exemplo.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="acc-pass">Senha</label>
+                        <input type="password" id="acc-pass" placeholder="senha">
+                        <button class="action-btn small" id="toggleAccPass" type="button">Mostrar</button>
+                    </div>
+                    <div class="form-group">
+                        <label for="acc-days">Dias de acesso</label>
+                        <input type="number" id="acc-days" value="30" min="1">
+                    </div>
+                    <button class="btn-primary" id="btn-add">Adicionar/Atualizar</button>
+                </div>
+                <div class="license-panel">
+                    <h3>Acessos Cadastrados</h3>
+                    <div style="overflow:auto;">
+                        <table id="access-table" style="width:100%;border-collapse:collapse;">
+                            <thead>
+                                <tr style="text-align:left;border-bottom:1px solid var(--border);">
+                                    <th style="padding:8px;">Email</th>
+                                    <th style="padding:8px;">Expira em</th>
+                                    <th style="padding:8px;">Dias restantes</th>
+                                    <th style="padding:8px;">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <script>
+        function readAccess() {
+            try { return JSON.parse(localStorage.getItem('userAccess') || '{}'); } catch { return {}; }
+        }
+        function writeAccess(db) {
+            localStorage.setItem('userAccess', JSON.stringify(db));
+        }
+        function fmtDate(ms) {
+            var d = new Date(ms);
+            return d.toLocaleDateString() + ' ' + d.toLocaleTimeString();
+        }
+        function daysLeft(ms) {
+            var diff = ms - Date.now();
+            return Math.max(0, Math.ceil(diff / 86400000));
+        }
+        function refreshTable() {
+            var db = readAccess();
+            var tbody = document.querySelector('#access-table tbody');
+            tbody.innerHTML = '';
+            Object.keys(db).forEach(function (email) {
+                var r = db[email];
+                var tr = document.createElement('tr');
+                tr.innerHTML = '<td style="padding:8px;">' + email + '</td>'
+                    + '<td style="padding:8px;">' + fmtDate(r.expiry) + '</td>'
+                    + '<td style="padding:8px;">' + daysLeft(r.expiry) + '</td>'
+                    + '<td style="padding:8px;"><button data-del="' + email + '" class="action-btn">Remover</button></td>';
+                tbody.appendChild(tr);
+            });
+            tbody.querySelectorAll('button[data-del]').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    var email = this.getAttribute('data-del');
+                    var db2 = readAccess();
+                    delete db2[email];
+                    writeAccess(db2);
+                    refreshTable();
+                });
+            });
+        }
+        document.getElementById('btn-add').addEventListener('click', function () {
+            var email = (document.getElementById('acc-email').value || '').trim().toLowerCase();
+            var pass = (document.getElementById('acc-pass').value || '').trim();
+            var days = parseInt(document.getElementById('acc-days').value, 10);
+            if (!email || !pass || !(days > 0)) return;
+            var db = readAccess();
+            var expiry = Date.now() + days * 86400000;
+            db[email] = { password: pass, expiry: expiry };
+            writeAccess(db);
+            refreshTable();
+        });
+        document.getElementById('toggleAccPass').addEventListener('click', function () {
+            var input = document.getElementById('acc-pass');
+            var isHidden = input.type === 'password';
+            input.type = isHidden ? 'text' : 'password';
+            this.textContent = isHidden ? 'Ocultar' : 'Mostrar';
+        });
+        refreshTable();
+    </script>
+</body>
+
+</html>

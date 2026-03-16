@@ -1,0 +1,12 @@
+{
+  "name": "gldev-sites",
+  "version": "1.0.0",
+  "description": "Rodando ambos os sites GL DEV",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
